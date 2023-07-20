@@ -1,32 +1,42 @@
-
 import {
   AppBar,
   Avatar,
   Badge,
   Box,
+  IconButton,
   InputBase,
   Menu,
   MenuItem,
+  Stack,
   styled,
   Toolbar,
   Typography,
 } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
-import React, { useState ,useContext}  from "react";
-import { AuthContext } from "../context/AuthContext";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
+const StyledAppBar = styled(AppBar)({
+  marginTop: "30px", // Add top spacing
+  backgroundColor: "#1a1a1a",
+});
+
+const CustomTypography = styled(Typography)({
+  cursor: "pointer",
+});
 
 
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
   justifyContent: "space-between",
+  height: "120px", // Increase the height of the navbar
 });
 
 const Search = styled("div")(({ theme }) => ({
-  backgroundColor: "white",
+  backgroundColor: theme.palette.grey[800], // Darker background color
   padding: "0 10px",
   borderRadius: theme.shape.borderRadius,
-  width: "30%",
+  width: "200px", // Smaller width
 }));
 
 const Icons = styled(Box)(({ theme }) => ({
@@ -38,10 +48,11 @@ const Icons = styled(Box)(({ theme }) => ({
   },
 }));
 
-const Navbar = () => {
+const AdminNavbar = () => {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null); // Add anchorEl state
-  const {user, logoutUser ,profile} = useContext(AuthContext);
+  const navigate = useNavigate();
+
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -51,28 +62,36 @@ const Navbar = () => {
   const handleMenuClose = () => {
     setOpen(false);
   };
-  
+
   return (
-    <AppBar position="sticky">
+    <StyledAppBar position="sticky">
       <StyledToolbar>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
           <Avatar
             alt="Remy Sharp"
             src="src/assets/logo.png"
             sx={{ width: 40, height: 40 }}
           />
-          <Typography variant='h8' sx={{ display: { xs: 'none', sm: 'block' } }}>zobspace</Typography>
+          <Typography variant="h8" sx={{ display: { xs: "none", sm: "block" } }}>
+            zobspace
+          </Typography>
         </div>
-        
+        <Stack direction="row" spacing={6}>
+          <CustomTypography variant="subtitle2" sx={{ display: { xs: "none", sm: "block" } }} onClick={() => { navigate('/admin/users'); }} style={{ cursor: "pointer" }}>
+            Users
+          </CustomTypography>
+          <CustomTypography variant="subtitle2" sx={{ display: { xs: "none", sm: "block" } }} onClick={() => { navigate('/admin/posts'); }} style={{ cursor: "pointer" }}> 
+            Posts
+          </CustomTypography>
+        </Stack>
         <Search>
-          <InputBase placeholder="search..." sx={{ color: 'black' }} />
+          <InputBase placeholder="Search..." sx={{ color: "white" }} />
         </Search>
-        <Icons>
-        <Typography variant="body1">{user && user.name}</Typography>
 
+        <Icons>
           <Avatar
             sx={{ width: 30, height: 30 }}
-            src={profile && profile.profile_picture ? profile.profile_picture : ""}
+            src="#"
             onClick={handleMenuOpen}
           />
         </Icons>
@@ -92,10 +111,13 @@ const Navbar = () => {
           horizontal: "right",
         }}
       >
-        <MenuItem sx={{ color: "black" }} onClick={logoutUser}><LogoutIcon /> Logout</MenuItem>
+
+        <MenuItem sx={{ color: "black" }}>
+          <LogoutIcon /> Logout
+        </MenuItem>
       </Menu>
-    </AppBar>
+    </StyledAppBar>
   );
 };
 
-export default Navbar;
+export default AdminNavbar;

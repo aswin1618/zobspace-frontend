@@ -8,17 +8,15 @@ import {
   Link,
   Typography,
   Box,
-  Backdrop,
 } from "@mui/material";
-import googleicon from '../assets/googleicon.png'
 
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
 import { CircularProgress } from '@mui/material';
 import { Alert, AlertTitle } from '@mui/material';
+import { AuthContext } from "../../context/AuthContext";
 
 
-function LoginPage() {
+function AdminLogin() {
   let { loginUser } = useContext(AuthContext)
 
   const navigate = useNavigate();
@@ -57,7 +55,7 @@ function LoginPage() {
     textDecoration: 'none',
     color: 'blue ',
   };
-  const [error, setError] = useState('');
+
   const [showAlert, setShowAlert] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -90,15 +88,14 @@ function LoginPage() {
   const validatePassword = (value) => {
     if (!value) {
       setPasswordError("Password is required");
-    } else if (value.length <= 6) {
-      setPasswordError("Password must be more than 6 characters");
     } else {
       setPasswordError("");
     }
   };
   const handleLoginSuccess = () => {
+    setShowAlert(true);
     setLoading(false);
-    navigate('/');
+    navigate('/admin');
   };
 
   const handleSubmit = async (e) => {
@@ -125,15 +122,15 @@ function LoginPage() {
         await loginUser(email, password, handleLoginSuccess);
       } catch (error) {
         setLoading(false);
-        setError(error.message);
-        setShowAlert(true);
         console.error('Error during login:', error);
+        alert('An error occurred during login');
       }
-    } 
+    }
 
   };
 
   return (
+
 
     <Grid>
       <Grid item xs={4}>
@@ -148,104 +145,86 @@ function LoginPage() {
       <Grid item xs={8}>
         <Paper elevation={10} style={paperStyle}>
           <Grid align="center">
-            <h2> Sign In </h2> <br />
+            <h2> Welcome Admin </h2> <br />
           </Grid>
           <form onSubmit={handleSubmit}>
-            <Box>
-              <TextField
-                id="standard-basic"
-                label="email"
-                placeholder="enter email address"
-                variant="outlined"
-                fullWidth
-                required
-                value={email}
-                onChange={handleEmailChange}
-                error={!!emailError}
-                helperText={emailError}
-                focused
-                sx={{
-                  marginBottom: '16px',
-                  "& label.Mui-focused": {
-                    color: "white", // Change label color when focused
-                  },
-                  "& .MuiInput-underline:after": {
-                    borderBottomColor: "white", // Change underline color when focused
-                  },
-                }}
-              />
-              <TextField
-                label="password"
-                placeholder="enter password"
-                type="password"
-                variant="outlined"
-                margin="dense"
-                fullWidth
-                required
-                value={password}
-                onChange={handlePasswordChange}
-                error={!!passwordError}
-                helperText={passwordError}
-                focused
-                sx={{
-                  "& label.Mui-focused": {
-                    color: "white", // Change label color when focused
-                  },
-                  "& .MuiInput-underline:after": {
-                    borderBottomColor: "white", // Change underline color when focused
-                  },
-                }}
-              />
+            {loading ? ( // Check if loading is true
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+                <CircularProgress />
+              </div>
 
-              <Button
-                type="submit"
-                variant="contained"
-                style={stylbtn}
-                fullWidth
-              >
-                Sign In
-              </Button>
-
-              <Typography style={firsttext}>
-                <Link href="#">Forgot password ?</Link>
-              </Typography>
-
-              {/* <Button
-                  variant="contained"
-                  style={stylbtn1}
+            ) : (
+              <Box>
+                <TextField
+                  id="standard-basic"
+                  label="email"
+                  placeholder="enter email address"
+                  variant="outlined"
                   fullWidth
-                  startIcon={<img src={googleicon} alt="New Logo" style={{ height: '24px' }} />}
-                >
-                  Sign in using google
-                </Button> */}
+                  required
+                  value={email}
+                  onChange={handleEmailChange}
+                  error={!!emailError}
+                  helperText={emailError}
+                  focused
+                  sx={{
+                    marginBottom: '16px',
+                    "& label.Mui-focused": {
+                      color: "white", // Change label color when focused
+                    },
+                    "& .MuiInput-underline:after": {
+                      borderBottomColor: "white", // Change underline color when focused
+                    },
+                  }}
+                />
+                <TextField
+                  label="password"
+                  placeholder="enter password"
+                  type="password"
+                  variant="outlined"
+                  margin="dense"
+                  fullWidth
+                  required
+                  value={password}
+                  onChange={handlePasswordChange}
+                  error={!!passwordError}
+                  helperText={passwordError}
+                  focused
+                  sx={{
+                    "& label.Mui-focused": {
+                      color: "white", // Change label color when focused
+                    },
+                    "& .MuiInput-underline:after": {
+                      borderBottomColor: "white", // Change underline color when focused
+                    },
+                  }}
+                />
 
-              <Typography style={lasttext}>
-                Don't have an account ?..
-                <Link onClick={() => {
-                  navigate("/signup");
-                }} style={linkStyles} >
-                  sign Up here</Link>
-              </Typography>
-            </Box>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  style={stylbtn}
+                  fullWidth
+                >
+                  Sign In
+                </Button>
+
+              </Box>
+            )}
           </form>
           <div>
             {showAlert && (
-              <Alert severity="error">
-                <AlertTitle>Login error</AlertTitle>
-                {error}
+              <Alert severity="success">
+                <AlertTitle>Login Success</AlertTitle>
+                Login successful!
               </Alert>
             )}
+            {/* Rest of the login form */}
           </div>
         </Paper>
       </Grid>
-      <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={loading}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
     </Grid>
   );
 }
 
-export default LoginPage;
+export default AdminLogin ;

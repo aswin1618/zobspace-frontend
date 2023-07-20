@@ -6,55 +6,292 @@ import CardActions from "@mui/material/CardActions";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { red } from "@mui/material/colors";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import AddIcon from '@mui/icons-material/Add';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Audioplayer from "./Audioplayer";
+import { Badge, Button, Menu, MenuItem, Modal } from "@mui/material";
+import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import { useState } from "react";
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import EditPost from "./EditPost";
+import CollabPost from "./CollabPost";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import { Snackbar, Alert } from '@mui/material';
+import CommentIcon from '@mui/icons-material/Comment';
+const API_URL = import.meta.env.VITE_API_URL
 
-export default function AudioPost() {
+function ConfirmationDialog({ open, onClose, onConfirm }) {
   return (
-    <Card
-      elevation={10}
-      sx={{
-        maxWidth: 500,
-        minWidth: 200,
-        "@media (max-width: 600px)": {
-          maxWidth: 300,
-          minWidth: 150,
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Confirmation</DialogTitle>
+      <DialogContent sx={{ color: 'black' }} >
+        Are you sure you want to delete the post?
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onConfirm} color="error" variant="contained">
+          Confirm
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+export default function AudioPost({ posts }) {
+  const { authTokens, user } = useContext(AuthContext);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [captionmodal, setCaptionmodal] = useState(false);
+  const [collabModal, setCollabModal] = useState(false);
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+  const [successAlertOpen, setSuccessAlertOpen] = useState(false);
+  const [errorAlertOpen, setErrorAlertOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+
+  if (!posts || posts.length === 0) {
+    return <div>No posts available.</div>;
+  }
+  const post = posts[0];
+  
+  const createdAt = new Date(post.created_at).toLocaleString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  const [isLiked, setIsLiked] = useState(post.likes.includes(user.user_id));
+  const handleLikeClick = async (post_id) => {
+    try {
+      const response = await fetch(`${API_URL}/feed/posts/like/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + String(authTokens.access),
         },
-        bgcolor: "#dce0e0",
-      }}
-    >
+        body: JSON.stringify({
+          post_id: post_id,
+        })
+      });
+
+      if (response.ok) {
+        setIsLiked((prevState) => {
+          if (prevState) {
+            // Decrease count by one when isLiked changes from true to false
+            post.total_likes -= 1;
+          } else {
+            // Increase count by one when isLiked changes from false to true
+            post.total_likes += 1;
+          }
+          return !prevState;
+        });
+        console.log('success');
+      } else {
+        console.error('Failed');
+      }
+    } catch (error) {
+      console.error('An error occurred while like/unlike:', error);
+    }
+  };
+  const shouldDisplay = post.author === user.name;
+
+
+  const handleOpenMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const handleEditPost = () => {
+    setCaptionmodal(true)
+    handleCloseMenu();
+  };
+  const handleUpdateSuccess = () => {
+    setCaptionmodal(false);
+  };
+  const handleCollabSuccess = () => {
+    setCaptionmodal(false);
+  };
+
+  const handleDeletePost = () => {
+    setIsConfirmationOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/feed/posts/delete/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + String(authTokens.access),
+        },
+        body: JSON.stringify({
+          post_id: post.id,
+        }),
+      });
+
+      if (response.ok) {
+        console.log('Success');
+        setIsConfirmationOpen(false);
+        setSuccessAlertOpen(true);
+      } else {
+        console.error('Failed');
+        setErrorAlertOpen(true);
+      }
+    } catch (error) {
+      console.error('An error occurred while deleting the post:', error);
+      setErrorAlertOpen(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setIsConfirmationOpen(false);
+  };
+
+  return (
+    <Card sx={{
+      margin: 5,
+      backgroundColor: "black",
+      borderRadius: 6,
+    }}>
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            R
-          </Avatar>
+          <Avatar
+            alt="Remy Sharp"
+            src={post.author_profile_pic}
+          />
         }
         action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
+          shouldDisplay && (
+            <div>
+              <IconButton aria-label="settings" onClick={handleOpenMenu}>
+                <MoreVertIcon sx={{ color: 'white' }} />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleCloseMenu}
+              >
+                <MenuItem onClick={handleEditPost} sx={{ color: 'black' }} >Edit Post</MenuItem>
+                <MenuItem onClick={handleDeletePost} sx={{ color: 'red' }}>Delete Post</MenuItem>
+              </Menu>
+            </div>
+          )
         }
-        title="Shrimp and Chorizo Paella"
-        subheader="September 14, 2016"
+
+        titleTypographyProps={{ variant: "h6" }}
+        title={post.authors_along_collab.length > 2 ? `${post.author} and ${post.authors_along_collab.length} others` 
+        : post.authors_along_collab.length > 0 && post.authors_along_collab.length < 2?  `${post.author} and ${post.authors_along_collab.join(', ')}`
+        : post.author}
+        subheader={
+          <Typography variant="subtitle2" sx={{ color: "white" }}>
+            {createdAt}
+          </Typography>
+        }
       />
+      {/* edit caption modal */}
+      <Modal
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        open={captionmodal}
+        onClose={() => setCaptionmodal(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <EditPost post={post} onEditSuccess={handleUpdateSuccess} />
+      </Modal>
+
+      <div>
+        {/* Delete post confirmation dialog */}
+        <ConfirmationDialog
+          open={isConfirmationOpen}
+          onClose={handleCancelDelete}
+          onConfirm={handleConfirmDelete}
+        />
+      </div>
+
+      {/* collab post modal */}
+
+      <Modal
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        open={collabModal}
+        onClose={() => setCollabModal(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Typography variant="h5" gutterBottom>
+         <CollabPost post={post} onEditSuccess={handleCollabSuccess}/>
+        </Typography>
+      </Modal>
+
       <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          This is something that I reecently created!
-          enjoyasdasdasdsadassadasdssdasasdasfasaweasfasf
+        <Typography variant="body2" color="text.primary">
+          {post.caption}
         </Typography>
       </CardContent>
-      <Audioplayer />
+      <Audioplayer audioFile={post.audio_file} />
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
+        <IconButton
+          aria-label="add to favorites"
+          sx={{ color: "white" }}
+          onClick={() => handleLikeClick(post.id)}
+        >
+          <Badge badgeContent={post.total_likes} color="secondary" showZero>
+            {isLiked ? (
+              <Favorite sx={{ color: "red" }} />
+            ) : (
+              <FavoriteBorder sx={{ color: "white" }} />
+            )}
+          </Badge>
         </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
+        <IconButton
+          aria-label="create along"
+          sx={{ color: "white" }}>
+          <CommentIcon sx={{ color: 'white' }} />
+        </IconButton>
+
+        <IconButton
+          aria-label="create along"
+          sx={{ color: "white" }}>
+          <AddIcon sx={{ color: 'white' }} onClick={() => setCollabModal(true)} />
         </IconButton>
       </CardActions>
+
+      <Snackbar
+        open={successAlertOpen}
+        autoHideDuration={4000}
+        onClose={() => setSuccessAlertOpen(false)}
+      >
+        <Alert severity="success" onClose={() => setSuccessAlertOpen(false)}>
+          Post deleted successfully!
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        open={errorAlertOpen}
+        autoHideDuration={4000}
+        onClose={() => setErrorAlertOpen(false)}
+      >
+        <Alert severity="error" onClose={() => setErrorAlertOpen(false)}>
+          An error occurred while deleting the post.
+        </Alert>
+      </Snackbar>
+
     </Card>
+
   );
 }

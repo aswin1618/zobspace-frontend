@@ -1,22 +1,21 @@
 import React from "react";
 import Sidebar from "../components/Sidebar";
-import { Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import Navbar from "../components/NavBar";
+import ExploreContent from "../components/ExploreContent";
+import Layout from "./Layout";
+
 
 function Explore() {
   return (
     <>
-    <Navbar />
-      <Box height={30} />
-      <Box sx={{ display: "flex" }}>
-        <Sidebar />
+      
+        <Layout>
+          <Box marginLeft={{ xs: '10px' }}>
+            <ExploreContent />
+          </Box>
+        </Layout>
 
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <h2>Explore</h2>
-        
-       
-      </Box>
-      </Box>
     </>
   );
 }

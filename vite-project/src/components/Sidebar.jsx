@@ -1,210 +1,235 @@
-import * as React from "react";
-import { styled, useTheme } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import MuiDrawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import CssBaseline from "@mui/material/CssBaseline";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
+import React, { useContext, useState } from 'react';
+import { useTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import HomeIcon from '@mui/icons-material/Home';
-import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 import ExploreIcon from '@mui/icons-material/Explore';
-import addmusic from '../assets/addmusic.png'
-
-import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-const drawerWidth = 60;
-
-const openedMixin = (theme) => ({
-  width: drawerWidth,
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: "hidden",
-});
-
-const closedMixin = (theme) => ({
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: "hidden",
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up("sm")]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
-  },
-});
-
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-end",
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-}));
-
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  width: drawerWidth,
-  flexShrink: 0,
-  whiteSpace: "nowrap",
-  boxSizing: "border-box",
-  ...(open && {
-    ...openedMixin(theme),
-    "& .MuiDrawer-paper": openedMixin(theme),
-  }),
-  ...(!open && {
-    ...closedMixin(theme),
-    "& .MuiDrawer-paper": closedMixin(theme),
-  }),
-}));
+import AddIcon from '@mui/icons-material/Add';
+import MailIcon from '@mui/icons-material/Mail';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import PersonIcon from '@mui/icons-material/Person';
+import { useNavigate } from 'react-router-dom';
+import { Badge, Modal } from '@mui/material';
+import CreateModal from '../pages/CreateModal';
+import { AuthContext } from '../context/AuthContext';
 
 export default function Sidebar() {
+  const { count } = useContext(AuthContext);
+  const [open, setOpen] = useState(false);
   const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
-
   const navigate = useNavigate();
-
-  useEffect(() => {
-    function handleResize() {
-      if (window.innerWidth < 600) {
-        setOpen(false); // Close the drawer when the window width is less than 600px
-      } else {
-        setOpen(true); // Open the drawer when the window width is 600px or more
-      }
-    }
-
-    // Add event listener for the resize event
-    window.addEventListener("resize", handleResize);
-
-    // Cleanup the event listener when the component unmounts
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
+  const handleModalClose = () => {
+    setOpen(false);
+  };
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <Drawer variant="permanent" >
-        <List sx={{ marginTop: "30vh" }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
+    <Box
+      display="flex"
+      flexDirection={{ xs: 'row', md: 'column' }}
+      justifyContent={{ xs: 'space-around', md: 'flex-start' }}
+      alignItems="flex-start"
+      pr={0} // Removed the padding on the right side
+      sx={{
+        [theme.breakpoints.up('md')]: {
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          height: '100vh',
+          maxWidth: '50px',
+          marginRight: '0',
+          marginLeft: { xs: 0, md: 3 },
+        },
+        [theme.breakpoints.down('sm')]: {
+          position: 'relative',
+          width: '100%',
+          marginRight: '0',
+        },
+      }}
+    >
+      <List sx={{ marginTop: { xs: 0, md: '30vh' } }}>
+        <Box
+          flexDirection={{ xs: 'row', md: 'column' }}
+          justifyContent={{ xs: 'space-around', md: 'flex-start' }}
+          alignItems={{ xs: 'center', md: 'flex-start' }}
+          sx={{
+            display: 'flex',
+            backgroundColor: 'black',
+            borderRadius: {md:8},
+            width: { xs: '100%', md: '50px' },
+            marginLeft: { xs: 0, md: 2 },
+            boxShadow: '0px 2px 8px 2px rgba(0, 0, 0, 0.5)',
+          }}
+        >
+          <ListItem
+            disablePadding
+            sx={{ display: 'block' }}
+            onClick={() => {
+              navigate('/');
             }}
           >
-            <ListItem
-              disablePadding
-              sx={{ display: "block" }}
-              onClick={() => {
-                navigate("/");
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: 'center',
+                px: 2.5,
               }}
             >
-              <ListItemButton
+              <ListItemIcon
                 sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
+                  minWidth: 32,
+                  justifyContent: 'center',
                 }}
               >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <HomeIcon color="primary"/>
-                </ListItemIcon>
-              </ListItemButton>
-            </ListItem>
+                <HomeIcon sx={{ color: 'white' }} />
+              </ListItemIcon>
+            </ListItemButton>
+          </ListItem>
 
-            <ListItem
-              disablePadding
-              sx={{ display: "block" }}
-              onClick={() => {
-                navigate("/explore");
+          <ListItem
+            disablePadding
+            sx={{ display: 'block' }}
+            onClick={() => {
+              navigate('/explore');
+            }}
+          >
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: 'center',
+                px: 2.5,
               }}
             >
-              <ListItemButton
+              <ListItemIcon
                 sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
+                  minWidth: 32,
+                  justifyContent: 'center',
                 }}
               >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <ExploreIcon color="primary" />
-                </ListItemIcon>
-              </ListItemButton>
-            </ListItem>
+                <ExploreIcon sx={{ color: 'white' }} />
+              </ListItemIcon>
+            </ListItemButton>
+          </ListItem>
 
-            <ListItem
-              disablePadding
-              sx={{ display: "block" }}
-              onClick={() => {
-                navigate("/create");
+          {/* createpage */}
+          <ListItem
+            disablePadding
+            sx={{ display: 'block' }}
+            onClick={() => setOpen(true)}
+          >
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: 'center',
+                px: 2.5,
               }}
             >
-              <ListItemButton
+              <ListItemIcon
                 sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
+                  minWidth: 32,
+                  justifyContent: 'center',
                 }}
               >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <img src={addmusic} alt="Custom Icon" style={{ height: '22px'}}  />
-                </ListItemIcon>
-              </ListItemButton>
-            </ListItem>
+                <AddIcon sx={{ color: 'white' }} />
+              </ListItemIcon>
+            </ListItemButton>
+          </ListItem>
 
-            <ListItem
-              disablePadding
-              sx={{ display: "block" }}
-              onClick={() => {
-                navigate("/library");
+          <Modal
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            open={open}
+            onClose={() => setOpen(false)}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <CreateModal handleModalClose={handleModalClose} />
+          </Modal>
+
+          {/* messages section */}
+          <ListItem
+            disablePadding
+            sx={{ display: 'block' }}
+            onClick={() => {
+              navigate('/messages');
+            }}
+          >
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: 'center',
+                px: 2.5,
               }}
             >
-              <ListItemButton
+              <ListItemIcon
                 sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
+                  minWidth: 32,
+                  justifyContent: 'center',
                 }}
               >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <LibraryMusicIcon color="primary" />
-                </ListItemIcon>
-              </ListItemButton>
-            </ListItem>
-          </Box>
-        </List>
-      </Drawer>
+                <MailIcon sx={{ color: 'white' }} />
+              </ListItemIcon>
+            </ListItemButton>
+          </ListItem>
+
+          {/* notifications section */}
+          <ListItem
+            disablePadding
+            sx={{ display: 'block' }}
+            onClick={() => {
+              navigate('/notifications');
+            }}
+          >
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: 'center',
+                px: 2.5,
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 32,
+                  justifyContent: 'center',
+                }}
+              > <Badge badgeContent={count} color="secondary" showZero>
+                  <NotificationsIcon sx={{ color: 'white' }} />
+                </Badge>
+              </ListItemIcon>
+            </ListItemButton>
+          </ListItem>
+
+          {/* profile section */}
+          <ListItem
+            disablePadding
+            sx={{ display: 'block' }}
+            onClick={() => {
+              navigate('/profilepage');
+            }}
+          >
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: 'center',
+                px: 2.5,
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 32,
+                  justifyContent: 'center',
+                }}
+              >
+                <PersonIcon sx={{ color: 'white' }} />
+              </ListItemIcon>
+            </ListItemButton>
+          </ListItem>
+        </Box>
+      </List>
     </Box>
   );
 }

@@ -8,8 +8,13 @@ import {
   Link,
   Typography,
   Box,
+  CircularProgress,
+  Alert,
+  AlertTitle,
+  Backdrop,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+const API_URL = import.meta.env.VITE_API_URL
 
 function SignupPage() {
   const navigate = useNavigate();
@@ -18,7 +23,8 @@ function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [redirect, setRedirect] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
@@ -26,8 +32,10 @@ function SignupPage() {
 
   const paperStyle = {
     padding: 60,
-    maxWidth: 300,
-    margin: "50px auto",
+    maxWidth: 700,
+    margin: "20px auto",
+    backgroundColor: "black",
+    height: "80%",
   };
   const stylbtn = {
     marginTop: "25px",
@@ -61,7 +69,7 @@ function SignupPage() {
     setConfirmPassword(value);
     validatePassword2(value);
   };
-  
+
   const validateEmail = (value) => {
     if (!value) {
       setEmailError("Email is required");
@@ -90,19 +98,16 @@ function SignupPage() {
       setConfirmPasswordError("");
     }
   };
+  const handleAlertClose = () => {
+    setShowAlert(false);
+  };
 
   const handleSignup = async (e) => {
     // Perform form validation
     e.preventDefault()
-    // if (email === "" || password === "" || confirmPassword === "") {
-    //   // Display error or validation message
-    //   return;
-    // }
-
-    // Perform signup logic here (e.g., call an API or authentication service)
-    // You can use the email and password states to send the signup request
+    setLoading(true)
     try {
-      const response = await fetch('http://localhost:8000/auth/register', {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -112,14 +117,18 @@ function SignupPage() {
         })
       });
       if (!response.ok) {
+        setShowAlert(true);
+        setLoading(false);
         throw new Error('Registration request failed.'); // or handle the specific error condition
       }
       else {
         localStorage.setItem('email', email);
         setRedirect(true);
+        setLoading(false);
+
       }
     } catch (error) {
-      // Handle any error that occurred during the request
+      setShowAlert(true)
       console.error(error);
     }
 
@@ -142,12 +151,16 @@ function SignupPage() {
         <Grid align="center">
           <h2> Signup to zobspaze </h2> <br />
         </Grid>
-        <Box>
+
+        <Box component="form"
+          sx={{
+            '& .MuiTextField-root': { m: 1, width: '30ch' },
+          }}>
           <TextField
             id="standard-basic"
             label="email"
             placeholder="enter email adress"
-            variant="standard"
+            variant="outlined"
             type="email"
             fullWidth
             required
@@ -155,21 +168,41 @@ function SignupPage() {
             onChange={handleEmailChange}
             error={!!emailError}
             helperText={emailError}
+            focused
+            sx={{
+              marginBottom: '16px',
+              "& label.Mui-focused": {
+                color: "white", // Change label color when focused
+              },
+              "& .MuiInput-underline:after": {
+                borderBottomColor: "white", // Change underline color when focused
+              },
+            }}
           />
           <TextField
             label="username"
             placeholder="enter username"
-            variant="standard"
+            variant="outlined"
             fullWidth
             required
             value={username}
             onChange={(e) => setUserName(e.target.value)}
+            focused
+            sx={{
+              marginBottom: '16px',
+              "& label.Mui-focused": {
+                color: "white", // Change label color when focused
+              },
+              "& .MuiInput-underline:after": {
+                borderBottomColor: "white", // Change underline color when focused
+              },
+            }}
           />
           <TextField
             label="password"
             placeholder="enter password"
             type="password"
-            variant="standard"
+            variant="outlined"
             margin="dense"
             fullWidth
             required
@@ -177,12 +210,22 @@ function SignupPage() {
             onChange={handlePasswordChange}
             error={!!passwordError}
             helperText={passwordError}
+            focused
+            sx={{
+              marginBottom: '16px',
+              "& label.Mui-focused": {
+                color: "white", // Change label color when focused
+              },
+              "& .MuiInput-underline:after": {
+                borderBottomColor: "white", // Change underline color when focused
+              },
+            }}
           />
           <TextField
             label="confirm password"
             placeholder="password"
             type="password"
-            variant="standard"
+            variant="outlined"
             margin="dense"
             fullWidth
             required
@@ -190,6 +233,16 @@ function SignupPage() {
             onChange={handleConfirmPasswordChange}
             error={!!confirmPasswordError}
             helperText={confirmPasswordError}
+            focused
+            sx={{
+              marginBottom: '16px',
+              "& label.Mui-focused": {
+                color: "white", // Change label color when focused
+              },
+              "& .MuiInput-underline:after": {
+                borderBottomColor: "white", // Change underline color when focused
+              },
+            }}
           />
 
 
@@ -205,16 +258,30 @@ function SignupPage() {
 
 
 
-          <Button type="submit" variant="contained" style={stylbtn1} fullWidth>
+          {/* <Button type="submit" variant="contained" style={stylbtn1} fullWidth>
             Sign Up using google
-          </Button>
+          </Button> */}
 
           <Typography style={lasttext}>
             Already have an account?
             <Link href="#"> Sign in here</Link>
           </Typography>
         </Box>
+        <div>
+          {showAlert && (
+            <Alert severity="error" onClose={handleAlertClose}>
+              <AlertTitle>Signup error</AlertTitle>
+              your signup request failed, try doing it again
+            </Alert>
+          )}
+        </div>
       </Paper>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Grid>
   );
 }

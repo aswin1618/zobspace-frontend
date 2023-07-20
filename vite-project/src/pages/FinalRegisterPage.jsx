@@ -19,6 +19,7 @@ function FinalRegisterPage() {
     padding: 50,
     width: 300,
     margin: "50px auto",
+    backgroundColor: "black",
   };
   const stylbtn = {
     marginTop: "25px",
@@ -31,11 +32,13 @@ function FinalRegisterPage() {
     marginTop: "auto",
     padding: "10px",
     textAlign: "center",
+    color: 'white ',
   };
   const firsttext = {
     display: "flex",
     justifyContent: "flex-end",
     fontSize: "12px",
+    color: 'white ',
   };
   return (
     <Grid>

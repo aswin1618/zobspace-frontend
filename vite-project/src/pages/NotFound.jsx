@@ -11,13 +11,13 @@ import { Typography, Container, Link } from '@mui/material';
 const NotFound = () => {
     return (
         <Container maxWidth="sm" style={{ textAlign: 'center', marginTop: '50px' }}>
-            <Typography variant="h2" color="primary" gutterBottom>
+            <Typography variant="h2" color="white" gutterBottom>
                 404
             </Typography>
-            <Typography variant="h5" color="textSecondary" gutterBottom>
+            <Typography variant="h5" color="white" gutterBottom>
                 Page Not Found
             </Typography>
-            <Typography variant="body1" color="textSecondary">
+            <Typography variant="body1" color="white    ">
                 The requested page could not be found.
             </Typography>
             {/* <Typography variant="body1">

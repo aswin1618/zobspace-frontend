@@ -8,6 +8,7 @@ import {
   Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+const API_URL = import.meta.env.VITE_API_URL
 
 function Emailotp() {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ function Emailotp() {
     padding: 50,
     width: 300,
     margin: "50px auto",
+    backgroundColor: "black",
   };
   const stylbtn = {
     marginTop: "25px",
@@ -32,18 +34,20 @@ function Emailotp() {
     marginTop: "auto",
     padding: "10px",
     textAlign: "center",
+    color: 'white ',
   }
   const firsttext = {
     display: "flex",
     justifyContent: "flex-end",
-    fontSize: "12px"
+    fontSize: "12px",
+    color: 'white ',
   }
 
   const handleOtp = async (e) => {
     // Perform form validation
     e.preventDefault()
   try {
-    const response = await fetch('http://localhost:8000/auth/verify_otp', {
+    const response = await fetch(`${API_URL}/auth/verify_otp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

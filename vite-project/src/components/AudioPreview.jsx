@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { styled, useTheme } from "@mui/material/styles";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
 import IconButton from "@mui/material/IconButton";
-import PauseRounded from "@mui/icons-material/PauseRounded";
 import PlayArrowRounded from "@mui/icons-material/PlayArrowRounded";
-import FastForwardRounded from "@mui/icons-material/FastForwardRounded";
-import FastRewindRounded from "@mui/icons-material/FastRewindRounded";
+import PauseRounded from "@mui/icons-material/PauseRounded";
 
 const Widget = styled("div")(({ theme }) => ({
   padding: 16,
@@ -29,7 +27,7 @@ const TinyText = styled(Typography)({
   color: "black",
 });
 
-export default function Audioplayer({ audioFile }) {
+export default function AudioPreview({ audioFile }) {
   const theme = useTheme();
   const [duration, setDuration] = useState(0);
   const [position, setPosition] = useState(0);
@@ -70,14 +68,7 @@ export default function Audioplayer({ audioFile }) {
       audio.pause();
     }
   }, [paused]);
-  
-  useEffect(() => {
-    return () => {
-      // Clean up the audio when the component unmounts
-      audio.pause();
-      audio.currentTime = 0;
-    };
-  }, []);
+
   function formatDuration(value) {
     const absoluteValue = Math.abs(value);
     const minute = Math.floor(absoluteValue / 60);
@@ -90,18 +81,6 @@ export default function Audioplayer({ audioFile }) {
   const handleSliderChange = (event, value) => {
     setPosition(value);
     audio.currentTime = value;
-  };
-
-  const handleRewind = () => {
-    const newPosition = position - rewindDuration;
-    setPosition(newPosition < 0 ? 0 : newPosition);
-    audio.currentTime = newPosition < 0 ? 0 : newPosition;
-  };
-
-  const handleFastForward = () => {
-    const newPosition = position + forwardDuration;
-    setPosition(newPosition > duration ? duration : newPosition);
-    audio.currentTime = newPosition > duration ? duration : newPosition;
   };
 
   return (
@@ -174,16 +153,6 @@ export default function Audioplayer({ audioFile }) {
               mt: -1,
             }}
           >
-
-            <IconButton
-              aria-label="rewind"
-              onClick={handleRewind}
-            >
-              <FastRewindRounded
-                sx={{ fontSize: "2rem" }}
-                htmlColor={mainIconColor}
-              />
-            </IconButton>
             <IconButton
               aria-label={paused ? "play" : "pause"}
               onClick={() => setPaused(!paused)}
@@ -199,15 +168,6 @@ export default function Audioplayer({ audioFile }) {
                   htmlColor={mainIconColor}
                 />
               )}
-            </IconButton>
-            <IconButton
-              aria-label="fast-forward"
-              onClick={handleFastForward}
-            >
-              <FastForwardRounded
-                sx={{ fontSize: "2rem" }}
-                htmlColor={mainIconColor}
-              />
             </IconButton>
           </Box>
         </Box>
