@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Audioplayer from "./Audioplayer";
-import { Badge, Button, Menu, MenuItem, Modal } from "@mui/material";
+import { Badge, Box, Button, Divider, List, ListItem, ListItemAvatar, ListItemText, Menu, MenuItem, Modal, TextField } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { useState } from "react";
 import { useContext } from 'react';
@@ -46,6 +46,7 @@ export default function AudioPost({ posts }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [captionmodal, setCaptionmodal] = useState(false);
   const [collabModal, setCollabModal] = useState(false);
+  const [commentModal, setCommentModal] = useState(false);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [successAlertOpen, setSuccessAlertOpen] = useState(false);
   const [errorAlertOpen, setErrorAlertOpen] = useState(false);
@@ -56,7 +57,7 @@ export default function AudioPost({ posts }) {
     return <div>No posts available.</div>;
   }
   const post = posts[0];
-  
+
   const createdAt = new Date(post.created_at).toLocaleString("en-US", {
     year: "numeric",
     month: "long",
@@ -187,9 +188,9 @@ export default function AudioPost({ posts }) {
         }
 
         titleTypographyProps={{ variant: "h6" }}
-        title={post.authors_along_collab.length > 2 ? `${post.author} and ${post.authors_along_collab.length} others` 
-        : post.authors_along_collab.length > 0 && post.authors_along_collab.length < 2?  `${post.author} and ${post.authors_along_collab.join(', ')}`
-        : post.author}
+        title={post.authors_along_collab.length > 2 ? `${post.author} and ${post.authors_along_collab.length} others`
+          : post.authors_along_collab.length > 0 && post.authors_along_collab.length < 2 ? `${post.author} and ${post.authors_along_collab.join(', ')}`
+            : post.author}
         subheader={
           <Typography variant="subtitle2" sx={{ color: "white" }}>
             {createdAt}
@@ -234,7 +235,168 @@ export default function AudioPost({ posts }) {
         aria-describedby="modal-modal-description"
       >
         <Typography variant="h5" gutterBottom>
-         <CollabPost post={post} onEditSuccess={handleCollabSuccess}/>
+          <CollabPost post={post} onEditSuccess={handleCollabSuccess} />
+        </Typography>
+      </Modal>
+
+      {/* collab Comment modal */}
+
+      <Modal
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        open={commentModal}
+        onClose={() => setCommentModal(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Typography variant="h5" gutterBottom>
+          <Box maxWidth={450} minWidth={350} bgcolor={"#273033"} p={3} borderRadius={5} display="flex"
+            flexDirection="column"
+            alignItems="center">
+            <Typography variant="h6" textAlign="center" >Comments</Typography>
+            <List sx={{
+              width: '100%', maxWidth: 360, bgcolor: 'primary.main', overflow: 'auto',
+              maxHeight: 300,
+              '& ul': { padding: 0 }, borderRadius: 4,
+            }}>
+              <ListItem alignItems="flex-start">
+                <ListItemAvatar sx={{
+                  width: '20'
+                }}>
+                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                </ListItemAvatar>
+                <ListItemText
+                  secondary={
+
+                    <Typography
+                      sx={{ display: 'inline' }}
+                      component="span"
+                      variant="subtitle2"
+                      color="text.primary"
+                    >
+                      commented this
+                    </Typography>
+                  }
+                />
+              </ListItem>
+              <Divider variant="inset" component="li" />
+              <ListItem alignItems="flex-start">
+                <ListItemAvatar sx={{
+                  width: '20'
+                }}>
+                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                </ListItemAvatar>
+                <ListItemText
+                  secondary={
+
+                    <Typography
+                      sx={{ display: 'inline' }}
+                      component="span"
+                      variant="subtitle2"
+                      color="text.primary"
+                    >
+                      commented this
+                    </Typography>
+                  }
+                />
+              </ListItem>
+              <Divider variant="inset" component="li" />
+              <ListItem alignItems="flex-start">
+                <ListItemAvatar sx={{
+                  width: '20'
+                }}>
+                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                </ListItemAvatar>
+                <ListItemText
+                  secondary={
+
+                    <Typography
+                      sx={{ display: 'inline' }}
+                      component="span"
+                      variant="subtitle2"
+                      color="text.primary"
+                    >
+                      commented this
+                    </Typography>
+                  }
+                />
+              </ListItem>
+              <Divider variant="inset" component="li" />
+              <ListItem alignItems="flex-start">
+                <ListItemAvatar sx={{
+                  width: '20'
+                }}>
+                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                </ListItemAvatar>
+                <ListItemText
+                  secondary={
+
+                    <Typography
+                      sx={{ display: 'inline' }}
+                      component="span"
+                      variant="subtitle2"
+                      color="text.primary"
+                    >
+                      commented this
+                    </Typography>
+                  }
+                />
+              </ListItem>
+              <Divider variant="inset" component="li" />
+              <ListItem alignItems="flex-start">
+                <ListItemAvatar sx={{
+                  width: '20'
+                }}>
+                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                </ListItemAvatar>
+                <ListItemText
+                  secondary={
+
+                    <Typography
+                      sx={{ display: 'inline' }}
+                      component="span"
+                      variant="subtitle2"
+                      color="text.primary"
+                    >
+                      commented this
+                    </Typography>
+                  }
+                />
+              </ListItem>
+              <Divider variant="inset" component="li" />
+              <ListItem alignItems="flex-start">
+                <ListItemAvatar sx={{
+                  width: '20'
+                }}>
+                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                </ListItemAvatar>
+                <ListItemText
+                  secondary={
+
+                    <Typography
+                      sx={{ display: 'inline' }}
+                      component="span"
+                      variant="subtitle2"
+                      color="text.primary"
+                    >
+                      commented this
+                    </Typography>
+                  }
+                />
+              </ListItem>
+              <Divider variant="inset" component="li" />
+
+
+            </List>
+            <TextField sx={{ width: "100%", marginTop: "5px" ,marginBottom:"5px"}} id="standard-multiline-static" multiline label="comment" rows={2} variant="standard"
+            // value={comment} onChange={handleCommentChange}
+            />
+            <Button variant="contained" >POST comment</Button>
+          </Box>
+
         </Typography>
       </Modal>
 
@@ -261,7 +423,8 @@ export default function AudioPost({ posts }) {
         <IconButton
           aria-label="create along"
           sx={{ color: "white" }}>
-          <CommentIcon sx={{ color: 'white' }} />
+            <Badge badgeContent={0} color="secondary" showZero>
+          <CommentIcon sx={{ color: 'white' }} onClick={() => setCommentModal(true)} /></Badge>
         </IconButton>
 
         <IconButton
