@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Audioplayer from "./Audioplayer";
-import { Badge, Box, Button, Divider, List, ListItem, ListItemAvatar, ListItemText, Menu, MenuItem, Modal, TextField } from "@mui/material";
+import { Badge, Box, Button, CircularProgress, Divider, List, ListItem, ListItemAvatar, ListItemText, Menu, MenuItem, Modal, TextField } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { useState } from "react";
 import { useContext } from 'react';
@@ -22,6 +22,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Snackbar, Alert } from '@mui/material';
 import CommentIcon from '@mui/icons-material/Comment';
+import { useEffect } from "react";
 const API_URL = import.meta.env.VITE_API_URL
 
 function ConfirmationDialog({ open, onClose, onConfirm }) {
@@ -51,8 +52,9 @@ export default function AudioPost({ posts }) {
   const [successAlertOpen, setSuccessAlertOpen] = useState(false);
   const [errorAlertOpen, setErrorAlertOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-
-
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState('');
+  const [commentCount, setCommentCount] = useState(0);
   if (!posts || posts.length === 0) {
     return <div>No posts available.</div>;
   }
@@ -63,6 +65,25 @@ export default function AudioPost({ posts }) {
     month: "long",
     day: "numeric",
   });
+
+  const postid = post.id
+  const fetchComments = () => {
+    fetch(`${API_URL}/feed/comments/${postid}/`, {
+      method: 'GET',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setComments(data);
+        setCommentCount(data.length);
+      })
+      .catch((error) => {
+        console.error('Error fetching comments:', error);
+      });
+  };
+
+  
+
+
   const [isLiked, setIsLiked] = useState(post.likes.includes(user.user_id));
   const handleLikeClick = async (post_id) => {
     try {
@@ -155,6 +176,44 @@ export default function AudioPost({ posts }) {
   const handleCancelDelete = () => {
     setIsConfirmationOpen(false);
   };
+
+
+  const handleCommentChange = (event) => {
+    setNewComment(event.target.value);
+  };
+
+  const handlePostComment = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/feed/comments/create/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + String(authTokens.access),
+        },
+        body: JSON.stringify({
+          post: post.id,
+          content: newComment,
+        }),
+      });
+
+      if (response.ok) {
+        console.log('Success');
+        setCommentModal(false)
+        onEditSuccess();
+      } else {
+        console.error('Failed');
+        setCommentModal(false)
+      }
+    } catch (error) {
+      console.error('An error occurred while updating the post:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchComments();
+  }, [handlePostComment]);
 
   return (
     <Card sx={{
@@ -262,139 +321,43 @@ export default function AudioPost({ posts }) {
               maxHeight: 300,
               '& ul': { padding: 0 }, borderRadius: 4,
             }}>
-              <ListItem alignItems="flex-start">
-                <ListItemAvatar sx={{
-                  width: '20'
-                }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                </ListItemAvatar>
-                <ListItemText
-                  secondary={
+              {comments.map((comment) => (
+                <ListItem alignItems="flex-start">
+                  <ListItemAvatar sx={{
+                    width: '20'
+                  }}>
+                    <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={comment.author}
+                    secondary={
 
-                    <Typography
-                      sx={{ display: 'inline' }}
-                      component="span"
-                      variant="subtitle2"
-                      color="text.primary"
-                    >
-                      commented this
-                    </Typography>
-                  }
-                />
-              </ListItem>
-              <Divider variant="inset" component="li" />
-              <ListItem alignItems="flex-start">
-                <ListItemAvatar sx={{
-                  width: '20'
-                }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                </ListItemAvatar>
-                <ListItemText
-                  secondary={
-
-                    <Typography
-                      sx={{ display: 'inline' }}
-                      component="span"
-                      variant="subtitle2"
-                      color="text.primary"
-                    >
-                      commented this
-                    </Typography>
-                  }
-                />
-              </ListItem>
-              <Divider variant="inset" component="li" />
-              <ListItem alignItems="flex-start">
-                <ListItemAvatar sx={{
-                  width: '20'
-                }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                </ListItemAvatar>
-                <ListItemText
-                  secondary={
-
-                    <Typography
-                      sx={{ display: 'inline' }}
-                      component="span"
-                      variant="subtitle2"
-                      color="text.primary"
-                    >
-                      commented this
-                    </Typography>
-                  }
-                />
-              </ListItem>
-              <Divider variant="inset" component="li" />
-              <ListItem alignItems="flex-start">
-                <ListItemAvatar sx={{
-                  width: '20'
-                }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                </ListItemAvatar>
-                <ListItemText
-                  secondary={
-
-                    <Typography
-                      sx={{ display: 'inline' }}
-                      component="span"
-                      variant="subtitle2"
-                      color="text.primary"
-                    >
-                      commented this
-                    </Typography>
-                  }
-                />
-              </ListItem>
-              <Divider variant="inset" component="li" />
-              <ListItem alignItems="flex-start">
-                <ListItemAvatar sx={{
-                  width: '20'
-                }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                </ListItemAvatar>
-                <ListItemText
-                  secondary={
-
-                    <Typography
-                      sx={{ display: 'inline' }}
-                      component="span"
-                      variant="subtitle2"
-                      color="text.primary"
-                    >
-                      commented this
-                    </Typography>
-                  }
-                />
-              </ListItem>
-              <Divider variant="inset" component="li" />
-              <ListItem alignItems="flex-start">
-                <ListItemAvatar sx={{
-                  width: '20'
-                }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                </ListItemAvatar>
-                <ListItemText
-                  secondary={
-
-                    <Typography
-                      sx={{ display: 'inline' }}
-                      component="span"
-                      variant="subtitle2"
-                      color="text.primary"
-                    >
-                      commented this
-                    </Typography>
-                  }
-                />
-              </ListItem>
+                      <Typography
+                        sx={{ display: 'inline' }}
+                        component="span"
+                        variant="subtitle2"
+                        color="text.primary"
+                      >
+                        {comment.content}
+                      </Typography>
+                    }
+                  />
+                </ListItem>
+              ))}
               <Divider variant="inset" component="li" />
 
 
             </List>
-            <TextField sx={{ width: "100%", marginTop: "5px" ,marginBottom:"5px"}} id="standard-multiline-static" multiline label="comment" rows={2} variant="standard"
-            // value={comment} onChange={handleCommentChange}
-            />
-            <Button variant="contained" >POST comment</Button>
+            {loading ? (
+              <CircularProgress />
+            ) : (
+              <>
+                <TextField sx={{ width: "100%", marginTop: "5px", marginBottom: "5px" }} id="standard-multiline-static" multiline label="comment" rows={2} variant="standard"
+                  value={newComment} onChange={handleCommentChange}
+                />
+                <Button variant="contained" onClick={handlePostComment} >POST comment</Button>
+              </>
+            )}
           </Box>
 
         </Typography>
@@ -423,8 +386,8 @@ export default function AudioPost({ posts }) {
         <IconButton
           aria-label="create along"
           sx={{ color: "white" }}>
-            <Badge badgeContent={0} color="secondary" showZero>
-          <CommentIcon sx={{ color: 'white' }} onClick={() => setCommentModal(true)} /></Badge>
+          <Badge badgeContent={commentCount} color="secondary" showZero>
+            <CommentIcon sx={{ color: 'white' }} onClick={() => setCommentModal(true)} /></Badge>
         </IconButton>
 
         <IconButton

@@ -10,7 +10,7 @@ import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from "react-router-dom";
 const API_URL = import.meta.env.VITE_API_URL
 
-function CreateModal() {
+function CreateModal({ handleModalClose }) {
     const { authTokens, user } = useContext(AuthContext);
     const fileInputRef = useRef(null);
     const [isRecording, setIsRecording] = useState(false);

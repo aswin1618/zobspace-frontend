@@ -16,7 +16,8 @@ function ArtistProfile() {
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedImageUrl, setSelectedImageUrl] = useState(null);
     const fileInputRef = useRef(null);
-    const [bio, setBio] = useState(profile.bio);
+    const initialBio = profile && profile.bio ? profile.bio : '';
+    const [bio, setBio] = useState(initialBio);
     const [loading, setLoading] = useState(false);
 
 
@@ -72,6 +73,9 @@ function ArtistProfile() {
             // Handle network errors or other exceptions
         }
     };
+    const totalPosts = profile ? profile.total_posts : 0;
+    const FollowerCount = profile ? profile.total_followers : 0;
+    const FollowingCount = profile ? profile.total_following : 0;
 
     return (
         <>
@@ -109,7 +113,7 @@ function ArtistProfile() {
                             {user && user.name}
                         </Typography>
                         <Typography variant="body1">
-                            {profile.bio && profile.bio}
+                            {profile && profile.bio}
                         </Typography>
                         <Button size="small" sx={{ width: "160px", borderRadius: 8, marginTop: "12px", marginLeft: "-12px" }} variant="contained" endIcon={<EditIcon />} onClick={() => setOpen(true)}>
                             edit profile
@@ -184,7 +188,7 @@ function ArtistProfile() {
 
                     <Grid item xs={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                         <Typography variant="h6" gutterBottom>
-                            {profile.total_posts}
+                            {totalPosts}
                         </Typography>
                         <Typography variant="subtitle2" gutterBottom>
                             Posts
@@ -192,7 +196,7 @@ function ArtistProfile() {
                     </Grid>
                     <Grid item xs={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                         <Typography variant="h6" gutterBottom>
-                            {profile.total_followers}
+                            {FollowerCount}
                         </Typography>
                         <Typography variant="subtitle2" gutterBottom>
                             Followers
@@ -200,7 +204,7 @@ function ArtistProfile() {
                     </Grid>
                     <Grid item xs={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                         <Typography variant="h6" gutterBottom>
-                            {profile.total_following}
+                            {FollowingCount}
                         </Typography>
                         <Typography variant="subtitle2" gutterBottom>
                             Following
