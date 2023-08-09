@@ -1,6 +1,6 @@
 import { Box, Stack, Skeleton, Grid } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import AudioPost from "../components/AudioPost";
+import AudioPost from "./AudioPost";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 const API_URL = import.meta.env.VITE_API_URL

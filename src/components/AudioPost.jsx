@@ -198,9 +198,10 @@ export default function AudioPost({ posts }) {
       });
 
       if (response.ok) {
-        console.log('Success');
+        console.log('Success'); 
         setCommentModal(false)
-        onEditSuccess();
+        // onEditSuccess();
+        fetchComments();
       } else {
         console.error('Failed');
         setCommentModal(false)
@@ -213,7 +214,7 @@ export default function AudioPost({ posts }) {
   };
   useEffect(() => {
     fetchComments();
-  }, [handlePostComment]);
+  }, []);
 
   return (
     <Card sx={{

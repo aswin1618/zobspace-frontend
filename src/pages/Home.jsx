@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Navbar from "../components/NavBar";
 import HomeRight from "../components/HomeRight";
-import Feed from "../components/feed";
+import Feed from "../components/Feed";
 import Layout from "./Layout";
 
 function Home() {
@@ -25,6 +25,6 @@ function Home() {
       </Box>
     </>
   );
-}
+} 
 
 export default Home;
