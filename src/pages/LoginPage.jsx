@@ -11,6 +11,7 @@ import {
   Backdrop,
 } from "@mui/material";
 import googleicon from '../assets/googleicon.png'
+import logo from '../assets/logo.png'
 
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
@@ -140,7 +141,7 @@ function LoginPage() {
 
         <Avatar
           alt="Remy Sharp"
-          src="src/assets/logo.png"
+          src={logo}
           sx={{ width: 40, height: 40 }}
         />
 

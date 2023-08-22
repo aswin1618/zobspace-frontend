@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
@@ -64,7 +63,7 @@ function NotificationPage() {
 
             {notif.map((notification) => (
 
-                <List sx={{ width: '100%', maxWidth: 780, bgcolor: 'black', borderRadius: 6, marginTop: "10px" }}
+                <List sx={{ width: '100%', maxWidth: 780, bgcolor: 'black', borderRadius: 6, marginTop: "10px", }}
                 >
                     <ListItemButton
                         sx={{
@@ -72,13 +71,19 @@ function NotificationPage() {
                             maxWidth: 780,
                             bgcolor: isread ? 'rgba(0, 0, 0, 0.2)' : 'black',
                             borderRadius: 6,
-                            marginTop: '10px',
+                            height:"10px"
+    
                         }}
                         onClick={() => markNotificationAsRead(notification.id)}
                     >
-                        <ListItem alignItems="flex-start">
+                        <ListItem sx={{ height:"10px"}}alignItems="flex-start">
                             <ListItemAvatar>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                                <Avatar alt="Remy Sharp" 
+                                sx={{
+                                    width: 13,     // Reduced avatar size
+                                    height: 13,    // Reduced avatar size
+                                }}
+                                src="/static/images/avatar/1.jpg" />
                             </ListItemAvatar>
                             <ListItemText
 
@@ -86,15 +91,15 @@ function NotificationPage() {
                                     <React.Fragment>
 
                                         {notification.notification_type === 'like' ? (
-                                            <Typography sx={{ display: 'inline', color: notification.is_read ? '#525252' : 'red' }} component="span" variant="h6">
+                                            <Typography sx={{ display: 'inline', fontSize: 14, color: notification.is_read ? '#525252' : 'red' }} component="span" variant="h6">
                                                 {notification.username} liked your post {notification.post}
                                             </Typography>
                                         ) : notification.notification_type === 'follow' ? (
-                                            <Typography sx={{ display: 'inline', color: notification.is_read ? '#525252' :  'blue' }} component="span" variant="h6">
+                                            <Typography sx={{ display: 'inline',fontSize: 14, color: notification.is_read ? '#525252' :  'blue' }} component="span" variant="h6">
                                                 {notification.username} started following you.
                                             </Typography>
                                         ) : notification.notification_type === 'comment' ? (
-                                            <Typography sx={{ display: 'inline', color: notification.is_read ? '#525252' :  'green' }} component="span" variant="h6">
+                                            <Typography sx={{ display: 'inline', fontSize: 14,color: notification.is_read ? '#525252' :  'green' }} component="span" variant="h6">
                                                 {notification.username} commented on your post.
                                             </Typography>
                                         ) : null}

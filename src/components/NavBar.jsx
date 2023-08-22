@@ -12,9 +12,9 @@ import {
   Typography,
 } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
-import React, { useState ,useContext}  from "react";
+import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-
+import logo from '../assets/logo.png'
 
 
 const StyledToolbar = styled(Toolbar)({
@@ -41,7 +41,7 @@ const Icons = styled(Box)(({ theme }) => ({
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null); // Add anchorEl state
-  const {user, logoutUser ,profile} = useContext(AuthContext);
+  const { user, logoutUser, profile } = useContext(AuthContext);
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -51,24 +51,26 @@ const Navbar = () => {
   const handleMenuClose = () => {
     setOpen(false);
   };
-  
+
   return (
     <AppBar position="sticky">
       <StyledToolbar>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', margin: '10px 0' }}>
           <Avatar
-            alt="Remy Sharp"
-            src="src/assets/logo.png"
-            sx={{ width: 40, height: 40 }}
+            alt="Zobspace"
+            src={logo}
+            sx={{ width: 30, height: 30, marginTop: '4px', marginRight: '10px' }}
           />
           <Typography variant='h8' sx={{ display: { xs: 'none', sm: 'block' } }}>zobspace</Typography>
         </div>
-        
+
+
+
         <Search>
           <InputBase placeholder="search..." sx={{ color: 'black' }} />
         </Search>
         <Icons>
-        <Typography variant="body1">{user && user.name}</Typography>
+          <Typography variant="body1">{user && user.name}</Typography>
 
           <Avatar
             sx={{ width: 30, height: 30 }}
