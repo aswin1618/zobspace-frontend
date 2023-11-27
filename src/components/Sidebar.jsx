@@ -150,7 +150,7 @@ export default function Sidebar() {
             <CreateModal handleModalClose={handleModalClose} />
           </Modal>
 
-          {/* messages section */}
+          {/* messages section
           <ListItem
             disablePadding
             sx={{ display: 'block' }}
@@ -174,7 +174,7 @@ export default function Sidebar() {
                 <MailIcon sx={{ color: 'white' }} />
               </ListItemIcon>
             </ListItemButton>
-          </ListItem>
+          </ListItem> */}
 
           {/* notifications section */}
           <ListItem

@@ -27,30 +27,23 @@ function OtherArtistFeed({artistId}) {
         ProfilePosts();
     }, []);
 
+   console.log(artistId)
     const ProfilePosts = async () => {
-        try {
-            const response = await fetch(`${API_URL}//auth/artist_profile`, {
+        const response = await fetch(`${API_URL}auth/artist_profile/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + String(authTokens.access),
+                    'Authorization': 'Bearer '+ String(authTokens.access),
                 },
                 body: JSON.stringify({
                     artist_id: artistId, 
                 }),
             });
-
-            if (response.ok) {
-                
-                console.log('Success');
-            } else {
-                console.error('Failed');
-            }
-        } catch (error) {
-            console.error('An error occurred:', error);
-        }
+        let data = await response.json();
+        setAllPosts(data);
+        //  
+        console.log(data);
     };
-
 
     return (
         <Box sx={{ flexGrow: 1 }}>
